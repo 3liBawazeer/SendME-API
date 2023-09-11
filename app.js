@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 app.use(express.json())
 app.use(morgan("tiny"));
-app.get("/",(q,r)=>{ r.send("#شي_نتا_فكيو_يمن_نت") })
+app.get("/",(q,r)=>{ r.sendFile(__dirname + '/html.html') })
 
 const io = socket(server);
 
