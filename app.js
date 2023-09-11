@@ -33,7 +33,7 @@ const io = socket(server);
 const URL_DB = 'mongodb://localhost:27017/chaty';
 const URL_DB_ONLINE = 'mongodb+srv://sendme:FOCKqqZxfKW3geLz@cluster0.g5pjneg.mongodb.net/?retryWrites=true&w=majority';
 
-mongoose.connect(URL_DB).then(()=>{
+mongoose.connect(URL_DB_ONLINE).then(()=>{
     console.log("mongooDB is connected ...");
 }).catch((err)=>{
     console.log(err,"mongooDB is not connected ! ");
