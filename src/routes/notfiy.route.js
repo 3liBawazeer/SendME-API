@@ -1,11 +1,6 @@
 const router = require("express").Router();
 const admin = require("firebase-admin");
 
-var serviceAccount = require("../../adminFirebaseSDK.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
 
 router.post("/send", (req, res, next) => {
 

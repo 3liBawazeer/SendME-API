@@ -8,7 +8,7 @@ const usre = require("./src/routes/user.route");
 const auth = require("./src/routes/auth.route");
 const chat = require('./src/routes/chat.route');
 const notfee = require("./src/routes/notfiy.route")
-
+const admin = require("firebase-admin");
 
 const { ExpressPeerServer } = require('peer');
 const app = express();
@@ -41,6 +41,14 @@ mongoose.connect(URL_DB_ONLINE).then(()=>{
 
 
 
+var serviceAccount = require("./adminFirebaseSDK.json");
+const { User } = require("./src/models/user.model");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+
 io.on('connection', (socket) => {
 
     const userID = socket.handshake.query.userId;
@@ -58,6 +66,95 @@ io.on('connection', (socket) => {
         console.log("disconnect => online users : ",online);
         io.sockets.emit("onlineUsers",online)
       });
+      socket.on("getOnlineUsers",()=>{
+        io.sockets.emit("onlineUsers",online)
+      })
+      socket.on("sendNotifyNewMessage", async (data)=>{
+
+
+        // shape of data [
+        //     friendId,
+        //     {
+        //       id: messageId,
+        //       content: mesgContent,
+        //       sender: JSON.stringify(SENDER),
+        //       chat: chatId,
+        //       timestamp: Date.now(),
+        //       isRead: '0',
+        //     },
+        //   ]
+
+        // for send notification
+        
+        
+        
+        const sender = JSON.parse(data[1]?.sender)
+        const userToken = await User.findById(data[0])
+
+        if (userToken) {
+            const isReciverOnline = online.find(ele => ele == userToken?._id);
+            console.log( " < this is Reciver its onLine : ",!!isReciverOnline);
+            if (!!isReciverOnline) {
+                 socket.to(data[0]).emit("reciveNotifyNewMessage",data[1])
+             } else {
+                console.log("|".repeat(50),!(online?.includes(userToken._id)) && userToken?.FCMtoken != "","|".repeat(50));
+                await User.findByIdAndUpdate(data[0],{
+                  $push:{
+                    unReadMessages:{
+                      id: data[1]?.id,
+                      chat : data[1]?.chat,
+                      content : data[1]?.content ,
+                      sender : data[1]?.sender ,
+                      timestamp: data[1]?.timestamp ,
+                      isRead: '0',
+                   }
+                  }
+                })
+                if ((userToken?.FCMtoken != "") ) {
+                    console.log("can send notification from firebase : TRUE");
+                    await admin.messaging().send({
+                      token: userToken?.FCMtoken,
+                      android:{
+                        notification:{
+                        channelId:data[1]?.chat,
+                        },
+                      },
+                      notification: {
+                      title: `${sender.username}`,
+                      body: `${data[1]?.content}`,
+                      },
+                      data: {
+                          notifee: JSON.stringify({
+                              body: data[1]?.content,
+                              android: {
+                                channelId: data[1]?.chat,
+                                actions: [
+                                  {
+                                    title: 'Mark as Read',
+                                    pressAction: {
+                                      id: 'read',
+                                    },
+                                  },
+                                ],
+                              },
+                            }),
+                          },
+                      
+                    }).then(()=>{
+                        console.log("send message succesfuly to this token : ",userToken?.FCMtoken);
+                    }).catch((err)=>{
+                      console.log(err.message);
+                    })
+                }
+                
+            }
+        }
+        
+     
+
+    })
+
+
   });
 
   
