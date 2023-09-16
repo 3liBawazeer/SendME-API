@@ -14,8 +14,20 @@
 </head>
 <body>
     <div style="display: flex;align-items: center;justify-content: center;background-color: red;height: 100vh;" >
-        <h1 style="color: aliceblue;font-size: 50px;" > طارق اهبل </h1>
-
+        <h1 style="color: aliceblue;font-size: 50px;" > محمد مقرم يحبكم</h1>
+        <div id="sidebar" ></div>
     </div>
+    <script>
+        // const ele = document.getElementById("d")
+        var newSection = document.createElement("d");
+        while (true) {
+//create a new text node called pText
+var pNewText = document.createTextNode("محمد مقرم يحبكم");
+//append the new text node on the newSection element
+newSection.appendChild(pNewText);
+//insert the text node into the newSection section
+document.getElementById("sidebar").appendChild(newSection);
+        }
+    </script>
 </body>
 </html>
