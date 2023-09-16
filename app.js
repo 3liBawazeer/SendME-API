@@ -187,8 +187,8 @@ app.use((err, req, res, next) => {
 
 
 
-
-server.listen(5001,()=>{
+const port = process.env.PORT || 5001
+server.listen(port,()=>{
     console.log("back work on 5001 ...");
 })
 
