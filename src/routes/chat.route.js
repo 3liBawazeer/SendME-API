@@ -10,8 +10,9 @@ router.post('/getandCreateChat',isAuth,CheckisChatOrCreate);
 
 router.post('/getUnReadMessages',isAuth,async (req,res,next)=>{
    try {
-    if (req.userId) {
-        const user = await User.findById(data?.userId);
+    const userId = req.body.userId
+    if (userId) {
+        const user = await User.findById(userId);
         if (user) {
             let unReadMessages
             if(user.unReadMessages.length != 0){
@@ -23,6 +24,8 @@ router.post('/getUnReadMessages',isAuth,async (req,res,next)=>{
              next({status:401,message:"unauthorized error"})
             }
           }
+    }else{
+        next({status:401,message:"unauthorized error"})
     }
    } catch (error) {
     next({status:error.status,message:error})
