@@ -179,7 +179,6 @@ app.use("/notfee",notfee)
 //ERROR Handler
 app.use((err, req, res, next) => {
     if (err) {
-        console.log(err,"dddddddddd");
          res.status(err.status || 409).json(err);
     }
 });
