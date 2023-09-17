@@ -21,10 +21,11 @@ router.post('/getUnReadMessages',isAuth,async (req,res,next)=>{
               await user.save()
               res.json({res:unReadMessages,message:"get unReadMessages True "})
             } else {
-             next({status:401,message:"unauthorized error"})
+              res.json({res:[],message:"get unReadMessages True "})
             }
           }
     }else{
+        console.log("userId not found");
         next({status:401,message:"unauthorized error"})
     }
    } catch (error) {
