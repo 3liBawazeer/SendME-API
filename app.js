@@ -69,7 +69,8 @@ io.on('connection', (socket) => {
       socket.on("getOnlineUsers",()=>{
         io.sockets.emit("onlineUsers",online)
       })
-      socket.on("sendNotifyNewMessage", async (data)=>{
+
+      socket.on("sendNotifyNewMessage", async (data,callback)=>{
 
 
         // shape of data [
@@ -148,11 +149,54 @@ io.on('connection', (socket) => {
                 }
                 
             }
+            callback({
+              isSent:true
+            });
         }
-        
+        callback({
+          isSent:false
+        });
      
 
-    })
+       });
+
+       socket.on("sendChangeMessageStatus", async (data,callback)=>{
+        const {status,messagesIds,toId,} = data;
+        if (messagesIds.length != 0) { 
+  
+          const isReciverOnline = online.find(ele => ele == toId);
+  
+          if (!!isReciverOnline) {
+            console.log("send status to : ",isReciverOnline);
+            console.log("send reciveChangeMessageStatus to USER ");
+              socket.to(toId).emit("reciveChangeMessageStatus",{status,messagesIds});
+  
+          } else {
+            console.log("send reciveChangeMessageStatus to DATABASE ");
+            const userToken = await User.findById(toId);
+              if (userToken) {
+                await User.findByIdAndUpdate(toId,{
+                  $push:{
+                    messagesStatus:{
+                      messagesIds: messagesIds,
+                      status:status
+                  }
+                  }
+                })
+               
+              };
+  
+          }
+  
+          callback({
+            isSent:true
+          });
+  
+        }
+        callback({
+          isSent:false
+        }); 
+      });
 
 
   });

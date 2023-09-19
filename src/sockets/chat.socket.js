@@ -5,24 +5,26 @@ module.exports.sendAndReciveMessagesandNotification = (socket,onlineUsres) => {
     // notification socket :)* //
    
 
-    // socket.on("getUnReadMessages_Requist", async (data) => {
+    socket.on("getMessagesStatus_Requist", async (data) => {
       
-    //   const user = await User.findById(data?.userId);
-    //   if (user) {
-    //     console.log("UNREADE MESSAGES _) is full");
-    //     let unReadMessages
-    //     if(user.unReadMessages.length != 0){
-    //       unReadMessages = user?.unReadMessages;
-    //       user.unReadMessages = []
-    //       await user.save()
-    //       socket.emit("getUnReadMessages_Responsive",unReadMessages)
-    //     } else {
-    //       console.log("UNREADE MESSAGES _)  is empty"); 
-    //       socket.emit("getUnReadMessages_Responsive",[])
-    //     }
-    //   }
+      const user = await User.findById(data?.userId);
+      if (user) {
+        let messagesStatus
+        if(user.messagesStatus.length != 0){
+          messagesStatus = user?.messagesStatus;
+          user.messagesStatus = []
+          await user.save()
+          socket.emit("getMessagesStatus_Responsive",messagesStatus)
+        } else {
+          console.log("UNREADE MESSAGES _)  is empty"); 
+          socket.emit("getMessagesStatus_Responsive",[])
+        }
+      }
 
-    // })
+    })
+
+    
+    
 
     socket.on("leaveApp",(id)=>{
       const check = onlineUsres?.includes(id);
@@ -31,9 +33,10 @@ module.exports.sendAndReciveMessagesandNotification = (socket,onlineUsres) => {
       }
     })
 
-    socket.on("sendNewMessage",(data)=>{
+    socket.on("sendNewMessage",  (data,)=>{
         // console.log(data,"sendNewMessage <== 0 ==> sendNewMessage");
-        socket.to(data[1].chat).emit("reciveNewMessage",data[1])
+        socket.to(data[1].chat).emit("reciveNewMessage",data[1]) 
+         
     })
     
     socket.on("reqPeerId",(data)=>{

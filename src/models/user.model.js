@@ -19,11 +19,18 @@ const user = new mongoose.Schema({
             id:String,
             chat : { type: mongoose.Schema.Types.ObjectId , ref:'chat'},
             content : String ,
-            sender : { type:String , require:true} ,
+            sender : { type:String , require: true } ,
             timestamp: String ,
             isRead:String,
          }],
          default:[],
+    },
+    messagesStatus:{
+        type:[{
+            messagesIds:[String],
+            status:{type:String,default:"1"}
+         }],
+        default:[]
     }
 })
 
