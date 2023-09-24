@@ -16,6 +16,7 @@ const server = http.createServer(app);
 
 app.use(express.json())
 app.use(morgan("tiny"));
+
 app.get("/",(q,r)=>{ r.sendFile(__dirname + '/html.html') })
 
 const io = socket(server);
@@ -33,7 +34,7 @@ const io = socket(server);
 const URL_DB = 'mongodb://localhost:27017/chaty';
 const URL_DB_ONLINE = 'mongodb+srv://sendme:FOCKqqZxfKW3geLz@cluster0.g5pjneg.mongodb.net/?retryWrites=true&w=majority';
 
-mongoose.connect(URL_DB_ONLINE).then(()=>{
+mongoose.connect(URL_DB).then(()=>{
     console.log("mongooDB is connected ...");
 }).catch((err)=>{
     console.log(err,"mongooDB is not connected ! ");
@@ -72,27 +73,13 @@ io.on('connection', (socket) => {
 
       socket.on("sendNotifyNewMessage", async (data,callback)=>{
 
-
-        // shape of data [
-        //     friendId,
-        //     {
-        //       id: messageId,
-        //       content: mesgContent,
-        //       sender: JSON.stringify(SENDER),
-        //       chat: chatId,
-        //       timestamp: Date.now(),
-        //       isRead: '0',
-        //     },
-        //   ]
-
-        // for send notification
-        
-        
-        
         const sender = JSON.parse(data[1]?.sender)
         const userToken = await User.findById(data[0])
 
         if (userToken) {
+            callback({
+              isSent:true
+            });
             const isReciverOnline = online.find(ele => ele == userToken?._id);
             console.log( " < this is Reciver its onLine : ",!!isReciverOnline);
             if (!!isReciverOnline) {
@@ -198,6 +185,39 @@ io.on('connection', (socket) => {
         }); 
       });
 
+      socket.on("delMessages", async (data,callback)=>{
+
+        console.log("MessagesRemoved : ",data);
+
+        const {messagesIds,toId} = data;
+        if (messagesIds.length != 0) { 
+
+          const isReciverOnline = online.find(ele => ele == toId);
+  
+          if (!!isReciverOnline) {
+              socket.to(toId).emit("reciveMessagesDeleted",messagesIds);
+              callback({
+                isSent:true
+              });
+          } else {
+            const userToken = await User.findById(toId);
+              if (userToken) {
+                userToken.messagesDeleted.concat(messagesIds);
+                userToken.messagesDeleted =  userToken.messagesDeleted.filter((ele)=> !messagesIds.includes(ele.id) )
+                await userToken.save()
+                callback({
+                  isSent:true
+                });
+               
+              };
+  
+          }
+  
+        }
+        callback({
+          isSent:false
+        }); 
+      })
 
   });
 

@@ -31,7 +31,8 @@ const user = new mongoose.Schema({
             status:{type:String,default:"1"}
          }],
         default:[]
-    }
+    },
+    messagesDeleted:[String],
 })
 
 const User = mongoose.model('user',user);
