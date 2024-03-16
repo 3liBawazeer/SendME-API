@@ -1,9 +1,12 @@
 const mongoose = require('mongoose')
 
 const user = new mongoose.Schema({
+    email:{type:String,require:true},
+    mySMId:String,
     username:{type:String,require:false,default:"بدون إسم" },
-    phoneNumber:{type:Number,require:true},
-    countryKey:{type:String,require:true},
+    phoneNumber:{type:Number,require:false,default:"0"},
+    password:{type:String,require:true},
+    countryKey:{type:String,require:false,default:"967"},
     FCMtoken:{type:String,default:""},
     image:{ type: String, default:"image-user.png" },
     friends:{

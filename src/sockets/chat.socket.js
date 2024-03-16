@@ -52,11 +52,11 @@ module.exports.sendAndReciveMessagesandNotification = (socket,onlineUsres) => {
       }
     });
 
-    socket.on("sendNewMessage",  (data,)=>{
-        // console.log(data,"sendNewMessage <== 0 ==> sendNewMessage");
-        socket.to(data[1].chat).emit("reciveNewMessage",data[1]) 
+    // socket.on("sendNewMessage",  (data,)=>{
+    //     // console.log(data,"sendNewMessage <== 0 ==> sendNewMessage");
+    //     socket.to(data[1].chat).emit("reciveNewMessage",data[1]) 
          
-    });
+    // });
     
     socket.on("reqPeerId",(data)=>{
         // console.log(data);

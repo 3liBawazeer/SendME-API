@@ -11,7 +11,7 @@ router.route('/all-users')
         const myContacts = req.body.contact;
         const allUsres = await User.find({});
         const contactHasAcount = allUsres.filter((ele,iex)=>{
-            const founded = myContacts.find((el)=> el.phoneNumber.includes(ele.phoneNumber))
+            const founded = myContacts.find((el)=> (ele.phoneNumber != "0" && el.phoneNumber.includes(ele.phoneNumber)) || el.phoneNumber == ele.mySMId )
             if (founded) {
                 ele.username = founded.displayName
                 return {...ele}
