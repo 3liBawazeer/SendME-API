@@ -87,45 +87,45 @@ io.on('connection', (socket) => {
                       content : data[1]?.content ,
                       sender : data[1]?.sender ,
                       timestamp: data[1]?.timestamp ,
+                      SMID:data[1]?.SMID,
                       isRead: '0',
                    }
                   }
                 })
                 if ((userToken?.FCMtoken != "") ) {
-                    // console.log("can send notification from firebase : TRUE");
-                    // await admin.messaging().send({
-                    //   token: userToken?.FCMtoken,
-                    //   android:{
-                    //     notification:{
-                    //     channelId:data[1]?.chat,
-                    //     },
-                    //   },
-                    //   notification: {
-                    //   title: `${sender.username}`,
-                    //   body: `${data[1]?.content}`,
-                    //   },
-                    //   data: {
-                    //       notifee: JSON.stringify({
-                    //           body: data[1]?.content,
-                    //           android: {
-                    //             channelId: data[1]?.chat,
-                    //             actions: [
-                    //               {
-                    //                 title: 'Mark as Read',
-                    //                 pressAction: {
-                    //                   id: 'read',
-                    //                 },
-                    //               },
-                    //             ],
-                    //           },
-                    //         }),
-                    //       },
+                    await admin.messaging().send({
+                      token: userToken?.FCMtoken,
+                      android:{
+                        notification:{
+                        channelId:data[1]?.chat,
+                        },
+                      },
+                      notification: {
+                      title: `${sender.username}`,
+                      body: `${data[1]?.content}`,
+                      },
+                      data: {
+                          notifee: JSON.stringify({
+                              body: data[1]?.content,
+                              android: {
+                                channelId: data[1]?.chat,
+                                actions: [
+                                  {
+                                    title: 'Mark as Read',
+                                    pressAction: {
+                                      id: 'read',
+                                    },
+                                  },
+                                ],
+                              },
+                            }),
+                          },
                       
-                    // }).then(()=>{
-                    //     console.log("send message succesfuly to this token : ",userToken?.FCMtoken);
-                    // }).catch((err)=>{
-                    //   console.log(err.message);
-                    // })
+                    }).then(()=>{
+                        console.log("send message succesfuly to this token : ",userToken?.FCMtoken);
+                    }).catch((err)=>{
+                      console.log(err.message);
+                    })
                 }
                 
             }
