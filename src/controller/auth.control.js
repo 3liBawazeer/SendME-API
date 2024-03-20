@@ -50,7 +50,7 @@ exports.signupController = async (req,res,next) => {
                 email: req.body.email,
                 password:hashPass,
                 username:req.body.username,
-                mySMId:generateNumber(),
+                SMID:generateNumber(),
                 image:req.body.image,
             });
             await user.save();

@@ -15,7 +15,7 @@ router.post("/editProfile",isAuth, async (req,res,next)=>{
    try {
 
             const newUser = await User.findOneAndUpdate(
-                {mySMId: req.body.SMID},
+                {SMID: req.body.SMID},
                 {$set:{
                  username:req.body.username,
                  image:req.body.image,

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const user = new mongoose.Schema({
     email:{type:String,require:true},
-    mySMId:String,
+    SMID:String,
     username:{type:String,require:false,default:"بدون إسم" },
     phoneNumber:{type:Number,require:false,default:"0"},
     password:{type:String,require:true},
